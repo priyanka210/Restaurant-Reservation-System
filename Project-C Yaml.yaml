@@ -1,0 +1,519 @@
+openapi: 3.0.0
+info:
+  title: Restaurant Reservation API
+  description: An API for managing restaurant reservations
+  version: 1.1.0
+
+paths:
+  /signup:
+    post:
+      summary: User Signup
+      description: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+      security: []
+
+  /signin:
+    post:
+      summary: User Login
+      description: Logs in a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  expires_in:
+                    type: integer
+      security: []
+
+  /signout:
+    post:
+      summary: User Logout
+      description: Logs out a user
+      responses:
+        '204':
+          description: No Content
+      security:
+        - apiKeyAuth: []
+
+  /manager/users:
+    get:
+      summary: List users
+      description: Returns a list of all users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Users'
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []
+        
+    post:
+      summary: Create a user
+      description: Creates a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+      security:
+        - apiKeyAuth: []
+        
+  /manager/users/{user_id}:
+    get:
+      summary: Get a user by ID
+      description: Returns a user by ID
+      parameters:
+        - in: path
+          name: user_id
+          description: ID of the user to retrieve
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []
+
+    put:
+      summary: Update a user by ID
+      description: Updates a user by ID
+      parameters:
+        - in: path
+          name: user_id
+          description: ID of the user to update
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []
+
+    delete:
+      summary: Delete a user by ID
+      description: Deletes a user by ID
+      parameters:
+        - in: path
+          name: user_id
+          description: ID of the user to delete
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []
+
+
+
+  /manager/reservations:
+    get:
+      summary: List reservations
+      description: Returns a list of all reservations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservations'
+      security:
+        - apiKeyAuth: []
+
+    post:
+      summary: Create a reservation
+      description: Creates a new reservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservations'
+      security:
+        - apiKeyAuth: []
+        
+    put:
+      summary: Update a reservation by ID
+      description: Updates a reservation by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservations'
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []
+
+  /manager/reservations/{user_id}:
+    get:
+      summary: List of all reservations by userid
+      description: Returns a list of all reservations by user id
+      parameters:
+        - in: path
+          name: user_id
+          description: ID of the user who made the reservation
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservations'
+      security:
+        - apiKeyAuth: []
+
+    
+  /manager/{user_id}/reservations/{reservation_id}:
+    delete:
+      summary: Delete a reservation by ID
+      description: Deletes a reservation by ID
+      parameters:
+        - in: path
+          name: reservation_id
+          description: ID of the reservation to delete
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+        - in: path
+          name: user_id
+          description: ID of the user
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []
+        
+  /user:
+    put:
+      summary: Update a user by ID
+      description: Updates a user by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []
+  
+  /user/reservations:
+    post:
+      summary: Create a reservation
+      description: Creates a new reservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservations'
+      security:
+        - apiKeyAuth: []
+
+    get:
+      summary: List of all reservations by userid
+      description: Returns a list of all reservations by user id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservations'
+      security:
+        - apiKeyAuth: []
+
+    put:
+      summary: Update a reservation by ID
+      description: Updates a reservation by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservations'
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []
+        
+  /user/{user_id}/reservations/{reservation_id}:
+    delete:
+      summary: Delete a reservation by ID
+      description: Deletes a reservation by ID
+      parameters:
+        - in: path
+          name: reservation_id
+          description: ID of the reservation to delete
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+        - in: path
+          name: user_id
+          description: ID of the user
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      security:
+        - apiKeyAuth: []       
+
+components:
+  schemas:
+    UserInput:
+      type: object
+      required:
+        - user_id
+        - password
+      properties:
+        user_id:
+          type: string
+        password:
+          type: string
+
+    UserCreateInput:
+      type: object
+      required:
+        - user_id
+        - name
+        - email
+        - user_type
+      properties:
+        user_id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        user_type:
+          type: string
+
+    UserUpdateInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+
+    ReservationInput:
+      type: object
+      required:
+        - table_id
+        - date
+        - user_id
+        - timeslot
+      properties:
+        table_id:
+          type: integer
+          minimum: 1
+        date:
+          type: string
+          format: date-time
+        number_of_seats:
+          type: integer
+          minimum: 1
+        user_id:
+          type: integer
+          minimum: 1
+        timeslot:
+          type: array
+          items:
+            type: string
+            enum:
+              - '0'
+              - '1'
+
+    ReservationUpdateInput:
+      type: object
+      required:
+        - table_id
+        - date
+        - user_id
+        - timeslot
+      properties:
+        table_id:
+          type: integer
+          minimum: 1
+        date:
+          type: string
+          format: date-time
+        number_of_seats:
+          type: integer
+          minimum: 1
+        user_id:
+          type: string
+          minimum: 1
+        timeslot:
+          type: array
+          items:
+            type: string
+            enum:
+              - '0'
+              - '1'
+              
+    Users:
+      type: object
+      properties:
+        user_id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        user_type:
+          type: string
+
+    Reservations:
+      type: object
+      properties:
+        reservation_id:
+          type: integer
+          minimum: 1
+        user_id:
+          type: string
+          minimum: 1
+        table_id:
+          type: integer
+          minimum: 1
+        timeslot:
+          type: array
+          items:
+            type: string
+            enum:
+              - '0'
+              - '1'
+        date:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
